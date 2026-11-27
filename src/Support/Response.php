@@ -1,17 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace GitSeek;
+namespace GitSeek\Support;
 
-use GitSeek\Support\Response;
-
-final class Router
+final class Response
 {
-    public function dispatch(string $action, array $payload): void
+    public static function ok(array $data = []): never
     {
-        match ($action) {
-            'ping'  => Response::ok(['pong' => true, 'time' => date('c')]),
-            default => Response::error("Unknown action: {$action}", 404),
-        };
+        self::send(200, ['success' => true] + $data);
+    }
+
+    public static function error(string $message, int $code = 400, array $extra = []): never
+    {
+        self::send($code, ['success' => false, 'error' => $message] + $extra);
+    }
+
+    private static function send(int $code, array $body): never
+    {
+        http_response_code($code);
+        echo json_encode(
+            $body,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        );
+        exit;
     }
 }
