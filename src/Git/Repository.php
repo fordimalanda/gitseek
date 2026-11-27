@@ -76,6 +76,18 @@ final class Repository
         ];
     }
 
+    public function diff(): string
+    {
+        // Modifications indexées (staged)
+        $staged = Runner::git(['diff', '--cached'], $this->path);
+        // Modifications non indexées (unstaged)
+        $unstaged = Runner::git(['diff'], $this->path);
+
+        // Si le repo n'a aucun commit (premier commit), HEAD n'existe pas.
+        // 'git diff' sans argument gère déjà ce cas (compare au working tree).
+        return ($staged['stdout'] ?? '') . ($unstaged['stdout'] ?? '');
+    }
+
     /** @return array{owner: string, repo: string, url: string}|null */
     public static function parseRemote(string $url): ?array
     {
