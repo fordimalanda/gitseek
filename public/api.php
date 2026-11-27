@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
+use GitSeek\Router;
+use GitSeek\Support\Response;
+
 require_once __DIR__ . '/../src/bootstrap.php';
 
 header('Content-Type: application/json; charset=utf-8');
-
-use GitSeek\Support\Response;
-use GitSeek\Router;
 
 try {
     $action  = $_GET['action'] ?? '';
