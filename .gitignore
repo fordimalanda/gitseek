@@ -3,7 +3,10 @@
 /storage/logs/*
 /storage/sessions/*
 !/storage/*/.gitkeep
+/public/uploads/*
+!/public/uploads/.gitkeep
 .DS_Store
 .idea/
 .vscode/
 *.log
+vendor/
