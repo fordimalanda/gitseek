@@ -5,8 +5,8 @@ namespace GitSeek;
 
 use GitSeek\Controllers\DiscoveryController;
 use GitSeek\Controllers\RepoController;
-use GitSeek\Support\Response;
 use GitSeek\Controllers\CommitController;
+use GitSeek\Support\Response;
 
 final class Router
 {
@@ -16,8 +16,8 @@ final class Router
             'ping'       => Response::ok(['pong' => true, 'time' => date('c')]),
             'discover'   => (new DiscoveryController())->discover($payload),
             'repo-state' => (new RepoController())->state($payload),
+            'commit'     => (new CommitController())->commit($payload),
             default      => Response::error("Unknown action: {$action}", 404),
-            'commit' => (new CommitController())->commit($payload),
         };
     }
 }

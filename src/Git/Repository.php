@@ -67,7 +67,6 @@ final class Repository
             return ['ahead' => 0, 'behind' => 0, 'hasUpstream' => true];
         }
 
-        // Output: "behind\tahead"
         $parts = preg_split('/\s+/', trim($r['stdout'])) ?: [];
         return [
             'behind'      => (int) ($parts[0] ?? 0),
@@ -78,24 +77,18 @@ final class Repository
 
     public function diff(): string
     {
-        // Modifications indexées (staged)
         $staged = Runner::git(['diff', '--cached'], $this->path);
-        // Modifications non indexées (unstaged)
         $unstaged = Runner::git(['diff'], $this->path);
 
-        // Si le repo n'a aucun commit (premier commit), HEAD n'existe pas.
-        // 'git diff' sans argument gère déjà ce cas (compare au working tree).
         return ($staged['stdout'] ?? '') . ($unstaged['stdout'] ?? '');
     }
 
     /** @return array{owner: string, repo: string, url: string}|null */
     public static function parseRemote(string $url): ?array
     {
-        // git@github.com:owner/repo.git
         if (preg_match('#^git@([^:]+):([^/]+)/(.+?)(?:\.git)?$#', $url, $m) === 1) {
             return ['owner' => $m[2], 'repo' => $m[3], 'url' => $url];
         }
-        // https://github.com/owner/repo.git
         if (preg_match('#^https?://[^/]+/([^/]+)/(.+?)(?:\.git)?$#', $url, $m) === 1) {
             return ['owner' => $m[1], 'repo' => $m[2], 'url' => $url];
         }
