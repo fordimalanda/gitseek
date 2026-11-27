@@ -1,25 +1,25 @@
-const statusEl = document.getElementById('api-status');
-const appEl = document.getElementById('app');
+import { $ } from './core/dom.js';
+import { state, subscribe } from './core/state.js';
+import { renderSidebar } from './ui/sidebar.js';
+import { renderTabs } from './ui/tabs.js';
+import { runDiscovery } from './features/discover.js';
 
-async function ping() {
-    try {
-        const res = await fetch('/api?action=ping', { method: 'POST' });
-        const data = await res.json();
+// Wire render pipeline: any state change re-renders everything.
+subscribe(() => {
+    renderSidebar();
+    renderTabs();
+});
 
-        if (data.success) {
-            statusEl.textContent = 'API OK';
-            statusEl.className = 'badge ok';
-            appEl.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-        } else {
-            statusEl.textContent = 'API error';
-            statusEl.className = 'badge err';
-            appEl.textContent = data.error ?? 'Unknown error';
-        }
-    } catch (err) {
-        statusEl.textContent = 'offline';
-        statusEl.className = 'badge err';
-        appEl.textContent = err.message;
-    }
-}
+// Refresh button
+$('#refresh-btn').addEventListener('click', () => runDiscovery(true));
 
-ping();
+// Bulk action buttons (wired later to real actions)
+$('#bulk-commit').addEventListener('click', () => {
+    alert(`Commit sur: ${[...state.selected].join(', ')}\n\n(fonctionnalité à venir)`);
+});
+$('#bulk-commit-push').addEventListener('click', () => {
+    alert(`Commit & Push sur: ${[...state.selected].join(', ')}\n\n(fonctionnalité à venir)`);
+});
+
+// Boot
+runDiscovery(false);
